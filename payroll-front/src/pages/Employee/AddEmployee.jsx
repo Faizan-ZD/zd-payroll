@@ -6,7 +6,8 @@ import { validateForm } from "./employeeValidation";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { TiArrowBack } from "react-icons/ti";
+import host from "./../utils"
+import {TiArrowBack} from "react-icons/ti"
 
 function AddEmployee(props) {
   const dobDateInputRef = useRef(null);
@@ -29,6 +30,8 @@ function AddEmployee(props) {
     setFields(fieldObj);
   }
 
+
+  console.log("fields", fields);
   const notify = (message) => {
     if(message == "alredy exist ADHAR."){
       setEdharerrors(message)
@@ -46,8 +49,9 @@ function AddEmployee(props) {
     setErrors(validationErrors.errObj);
     if (validationErrors && validationErrors.formIsValid) {
       axios
-        .post("http://localhost:7071/emp/add_employ", fields)
+        .post(`${host}/emp/add_employ`, fields)
         .then((response) => {
+          console.log("success", response.data.message);
           if (response.data.message == "Success ") {
             Swal.fire({
               icon: "success",
@@ -72,8 +76,9 @@ function AddEmployee(props) {
     setErrors(validationErrors.errObj);
     if (validationErrors && validationErrors.formIsValid) {
       axios
-        .post("http://localhost:7071/emp/update/" + props.data._id, fields)
+        .post(`${host}/emp/update/` + props.data._id, fields)
         .then((response) => {
+          console.log("success", response);
           if (response.data.message == "updated successfully.") {
             Swal.fire({
               icon: "success",
@@ -376,7 +381,7 @@ function AddEmployee(props) {
                         <option>Principal Software Engineer</option>
                         <option>Senior Software Developer</option>
                         <option>Software Developer</option>
-                        <option>Jr.Software Developer</option>
+                        <option>Junior Software Developer</option>
                         <option>Intern Software Developer</option>
                         <option>Other</option>
                       </select>
@@ -516,12 +521,14 @@ function AddEmployee(props) {
                       <div className="errorMsg">{errors.base_salary}</div>
                     </div>
                   </div>
+
                   <div className="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                     <div className="form-group">
                       <label>Effective Date</label>
                       <input
                         type="date"
                         name="effective_date"
+                        value={fields.effective_date}
                         onChange={(e) => handleChange(e)}
                         className="form-control"
                         placeholder="Efffective Date"

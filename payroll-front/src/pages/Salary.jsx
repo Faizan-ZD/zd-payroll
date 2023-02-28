@@ -1,18 +1,15 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import Downloadslip from "./Salary_slip/downloadslip";
 
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { TiArrowBack } from "react-icons/ti";
 function Salary() {
   const { id } = useParams();
-  let navigate = useNavigate();
+  let navigate = useNavigate()
   const [empdata, empdatachange] = useState({});
-  const [fields, setFields] = useState({
-    arrear: 0,
-    additional: 0,
-    arrear_comment: "",
-    additional_comment: "",
-  });
+  const [fields, setFields] = useState({});
+  const [switchToDownload, setSwitchToDownload] = useState(false);
   const [switchToAdvance, setSwitchToAdvance] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [salaryYear, setSalaryYear] = useState(0);
@@ -22,8 +19,9 @@ function Salary() {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
     let salaryMonth = event.target.value;
-    let yearStr = salaryMonth.substring(0, 4);
+    let yearStr = salaryMonth.substring(0, 4); 
     let monthStr = salaryMonth.substring(4);
+    console.log("salaryMonth", salaryMonth);
     setSalaryYear(yearStr);
     setSalaryMonthNumber(monthStr);
   };
@@ -32,32 +30,15 @@ function Salary() {
   const handleToggleAdvance = (e) => {
     setSwitchToAdvance((prev) => !prev);
   };
-  const handleChange = (e) => {
-    let fieldObj = { ...fields };
-    fieldObj[e.target.name] = e.target.value;
-    setFields(fieldObj);
-  };
+
   const getPreviousMonths = () => {
-    const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
 
     let currentDate = new Date();
     let previousMonths = [];
 
     for (let i = 0; i < 12; i++) {
       let date = new Date(currentDate);
+      let monthNames
       date.setMonth(date.getMonth() - i - 1);
       let month = monthNames[date.getMonth()];
       console.log('mont--------h =',month);
@@ -81,7 +62,11 @@ function Salary() {
   function handlesubmit(e) {
     e.preventDefault();
     navigate("/download" + id, {
-      state: { salaryYear: salaryYear, salaryMonthNumber: salaryMonthNumber, fields: fields },
+      state: {
+        salaryYear: salaryYear,
+        salaryMonthNumber: salaryMonthNumber,
+        fields: fields,
+      },
     });
   }
 
@@ -112,13 +97,15 @@ function Salary() {
       });
   }, []);
 
-  return (
+  return switchToDownload ? (
+    <Downloadslip year={salaryYear} month={salaryMonthNumber} />
+  ) : (
     <div className="pt-5">
       <div>
         <div className="offset-lg-2 col-lg-8">
           {empdata && (
             <form className="container" onSubmit={(e) => handlesubmit(e)}>
-              <div className="card m-5 p-3 ">
+              <div className="card m-5 p-3 " >
                 <Link to="/settings/manageprofile">
                   <TiArrowBack size={25} />
                 </Link>
@@ -176,16 +163,16 @@ function Salary() {
                           <input
                             type="text"
                             style={{ textTransform: "capitalize" }}
-                            name="arrear"
+                            name="arrs"
                             minLength="2"
                             maxLength="50"
                             className="form-control"
                             placeholder="ARRS"
-                            value={fields.arrear}
-                            onChange={(e) => handleChange(e)}
+                          // value={fields.First_Name}
+                          // onChange={(e) => handleChange(e)}
                           />
-                          {/* <div className="errorMsg">{errors.First_Name}</div> */}
                         </div>
+                        
                       </div>
                       <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                         <div className="form-group">
@@ -200,10 +187,10 @@ function Salary() {
                             maxLength="50"
                             className="form-control"
                             placeholder="Additional Amount"
-                            value={fields.additional}
-                            onChange={(e) => handleChange(e)}
+                          // value={fields.First_Name}
+                          // onChange={(e) => handleChange(e)}
                           />
-                          {/* <div className="errorMsg">{errors.First_Name}</div> */}
+                         
                         </div>
                       </div>
                     </div>
@@ -215,15 +202,15 @@ function Salary() {
                           </label>
                           <textarea
                             className="form-control"
-                            name="arrear_comment"
+                            name="arrs_comment"
                             rows="3"
                             cols="35"
                             placeholder="Write Comment Here"
-                            value={fields.arrear_comment}
-                            onChange={(e) => handleChange(e)}
+                          // value={fields.Current_Address}
+                          // onChange={(e) => handleChange(e)}
                           ></textarea>
                           <div className="errorMsg">
-                            {/* {errors.Current_Address} */}
+                            {/ {errors.Current_Address} /}
                           </div>
                         </div>
                       </div>
@@ -238,11 +225,11 @@ function Salary() {
                             rows="3"
                             cols="35"
                             placeholder="Write Comment Here"
-                            value={fields.additional_comment}
-                            onChange={(e) => handleChange(e)}
+                          // value={fields.Current_Address}
+                          // onChange={(e) => handleChange(e)}
                           ></textarea>
                           <div className="errorMsg">
-                            {/* {errors.Current_Address} */}
+                            {/ {errors.Current_Address} /}
                           </div>
                         </div>
                       </div>
@@ -268,10 +255,10 @@ function Salary() {
                         {prevMonths.map((month) => {
                           return (
                             <option
-                              key={month.format_1}
-                              value={month.year + month.month}
+                              key={month.format1}
+                              value={month.year + month.monthNumber}
                             >
-                              {month.format_1}
+                              {month.format1}
                             </option>
                           );
                         })}
